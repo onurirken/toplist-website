@@ -1,7 +1,9 @@
+import http from "http";
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
-import { ApolloServer } from "apollo-server-express";
+import jwt from "jsonwebtoken";
+import { ApolloServer, AuthenticationError } from "apollo-server-express";
 
 import schema from "./schema";
 import resolvers from "./resolvers";
@@ -11,35 +13,84 @@ const app = express();
 
 app.use(cors());
 
+const getMe = async req => {
+  const token = req.headers["x-token"];
+
+  if (token) {
+    try {
+      return await jwt.verify(token, process.env.SECRET);
+    } catch (e) {
+      throw new AuthenticationError("Your session expired. Sign in again.");
+    }
+  }
+};
+
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: async () => ({
-    models,
-    me: await models.User.findByLogin("rwieruch")
-  })
+  formatError: error => {
+    // remove the internal sequelize error message
+    // leave only the important validation error
+    const message = error.message
+      .replace("SequelizeValidationError: ", "")
+      .replace("Validation error: ", "");
+
+    return {
+      ...error,
+      message
+    };
+  },
+  context: async ({ req, connection }) => {
+    if (connection) {
+      return {
+        models
+      };
+    }
+
+    if (req) {
+      const me = await getMe(req);
+
+      return {
+        models,
+        me,
+        secret: process.env.SECRET
+      };
+    }
+  }
 });
 
 server.applyMiddleware({ app, path: "/graphql" });
-const eraseDatabaseOnSync = true;
 
-sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
-  if (eraseDatabaseOnSync) {
-    createUsersWithMessages();
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+const isTest = !!process.env.TEST_DATABASE;
+
+sequelize.sync({ force: isTest }).then(async () => {
+  if (isTest) {
+    createUsersWithMessages(new Date());
   }
 
-  app.listen({ port: 8000 }, () => {
+  httpServer.listen({ port: 8000 }, () => {
     console.log("Apollo Server on http://localhost:8000/graphql");
   });
 });
 
-const createUsersWithMessages = async () => {
+const createUsersWithMessages = async date => {
   await models.User.create(
     {
-      username: "rwieruch",
+      username: "onur",
+      email: "onur@onur.com",
+      password: "onuronur",
+      role: "ADMIN",
       messages: [
         {
-          text: "Published the Road to learn React"
+          text: "Learn nodejs",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        },
+        {
+          text: "Learn graphql",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
     },
@@ -50,13 +101,17 @@ const createUsersWithMessages = async () => {
 
   await models.User.create(
     {
-      username: "ddavids",
+      username: "ali",
+      email: "ali@ali.com",
+      password: "alialiali",
       messages: [
         {
-          text: "Happy to release ..."
+          text: "Sit",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
         },
         {
-          text: "Published a complete ..."
+          text: "Sleep",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
     },
