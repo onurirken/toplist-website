@@ -2,7 +2,7 @@
 
 ##### Node.js / Graphql / Apollo / Postgres / Sequilize / JWT / Auth / Mocha & Chai
 
-### Query examples .env example
+### .env example
 ````
 SECRET=wr3r2s4zwefw..wself.2456342.dawqdq
 DATABASE=toplist
