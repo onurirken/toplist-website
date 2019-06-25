@@ -1,2 +1,4 @@
+package-lock.json
 .env
+yarn.lock
 node_modules
