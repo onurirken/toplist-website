@@ -3,7 +3,7 @@
 ##### Node.js / Graphql / Apollo / Postgres / Sequilize / JWT / Auth / Mocha & Chai
 
 
-
+````
 SECRET=wr3r23fwfwefwekwself.2456342.dawqdq
 DATABASE=toplist
 DATABASE_USER=onurirken
