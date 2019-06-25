@@ -4,7 +4,7 @@
 
 
 ````
-SECRET=wr3r23fwfwefwekwself.2456342.dawqdq
+SECRET=wr3r2s4zwefw..wself.2456342.dawqdq
 DATABASE=toplist
 DATABASE_USER=onurirken
 DATABASE_PASSWORD=onurirken
