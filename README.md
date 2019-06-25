@@ -2,7 +2,7 @@
 
 ##### Node.js / Graphql / Apollo / Postgres / Sequilize / JWT / Auth / Mocha & Chai
 
-
+### Query examples .env example
 ````
 SECRET=wr3r2s4zwefw..wself.2456342.dawqdq
 DATABASE=toplist
@@ -10,7 +10,7 @@ DATABASE_USER=onurirken
 DATABASE_PASSWORD=onurirken
 PORT=8000
 ````
-### Query example
+### Query examples
 
 ````
 mutation {
