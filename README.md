@@ -1,3 +1,3 @@
 # top-list-website
 
-##### Node.js / Graphql / Apollo / Postgres / Sequilize / JWT / Auth
+##### Node.js / Graphql / Apollo / Postgres / Sequilize / JWT / Auth / Mocha & Chai
