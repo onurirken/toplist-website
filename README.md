@@ -9,3 +9,41 @@ DATABASE=toplist
 DATABASE_USER=onurirken
 DATABASE_PASSWORD=onurirken
 PORT=8000
+````
+### Query example
+
+````
+mutation {
+  signUp(username:"ali demir", email:"alidemir@mail.com", password:"alidemir") {token}
+}
+````
+ response içinde dönen token altta bulunan http headers ekle 
+ => "x-token": "your_token"
+````
+mutation {
+  createMessage(text: "Hello World") {
+    id
+    text
+  }
+}
+
+````
+````
+query {
+  messages {
+    edges {
+      id
+      text
+      user {
+        id
+        username
+        email
+        role
+      }
+      createdAt
+    }
+  }
+}
+````
+ 
+
