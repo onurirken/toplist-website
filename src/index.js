@@ -5,11 +5,10 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import DataLoader from "dataloader";
-import { Op } from "sequelize";
 import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
-
+import loaders from "./loaders";
 const app = express();
 
 app.use(cors());
@@ -24,18 +23,6 @@ const getMe = async req => {
       throw new AuthenticationError("Your session expired. Sign in again.");
     }
   }
-};
-
-const batchUsers = async (keys, models) => {
-  const users = await models.User.findAll({
-    where: {
-      id: {
-        [Op.in]: keys
-      }
-    }
-  });
-  
-  return keys.map(key => users.find(user => user.id === key));
 };
 
 const server = new ApolloServer({
@@ -56,7 +43,10 @@ const server = new ApolloServer({
   context: async ({ req, connection }) => {
     if (connection) {
       return {
-        models
+        models,
+        loaders: {
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+        }
       };
     }
 
@@ -68,7 +58,7 @@ const server = new ApolloServer({
         me,
         secret: process.env.SECRET,
         loaders: {
-          user: new DataLoader(keys => batchUsers(keys, models))
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
         }
       };
     }
