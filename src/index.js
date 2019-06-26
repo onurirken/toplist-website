@@ -9,6 +9,9 @@ import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
+
+import { createUsersWithMessages } from "./utils/createMockData";
+
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -73,60 +76,16 @@ server.applyMiddleware({ app, path: "/graphql" });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-const isTest = !!process.env.TEST_DATABASE;
+const forceManual = true;
+const isTest = forceManual || !!process.env.TEST_DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 
 sequelize.sync({ force: isTest || isProduction }).then(async () => {
   if (isTest || isProduction) {
-    createUsersWithMessages(new Date());
+    createUsersWithMessages({ date: new Date(), models });
   }
 
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
-
-const createUsersWithMessages = async date => {
-  await models.User.create(
-    {
-      username: "onur",
-      email: "onur@onur.com",
-      password: "onuronur",
-      role: "ADMIN",
-      messages: [
-        {
-          text: "Learn nodejs",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        },
-        {
-          text: "Learn graphql",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        }
-      ]
-    },
-    {
-      include: [models.Message]
-    }
-  );
-
-  await models.User.create(
-    {
-      username: "ali",
-      email: "ali@ali.com",
-      password: "alialiali",
-      messages: [
-        {
-          text: "Sit",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        },
-        {
-          text: "Sleep",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        }
-      ]
-    },
-    {
-      include: [models.Message]
-    }
-  );
-};
