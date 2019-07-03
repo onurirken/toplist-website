@@ -18,7 +18,7 @@ PORT=8000
 
 ````
 mutation {
-  signUp(username:"ali demir", email:"alidemir@mail.com", password:"alidemir") {token}
+  signUp(username:"onur irken", email:"oirken@mail.com", password:"onurirken") {token}
 }
 ````
  response içinde dönen token altta bulunan http headers ekle 
