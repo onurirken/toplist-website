@@ -2,7 +2,6 @@
 
 ##### Node.js / Graphql / Apollo / Postgres / Sequilize / JWT / Auth / Mocha & Chai
 
-deneme url = https://toplist-website.herokuapp.com/graphql
 
 ### .env example
 
